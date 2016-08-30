@@ -17,4 +17,47 @@ function assert(condition, message) {
   }
 }
 
-module.exports = { AssertionError, assert };
+const existy = (val) => {
+  return (val !== null && val !== undefined);
+}
+
+const truthy = (val) => {
+  return !!val;
+}
+
+/**
+ *
+ * http://stackoverflow.com/questions/13410
+ 754/i-want-to-display-the-file-name-in-the-log-statement
+ * examines the call stack and returns a string indicating
+ * the file and line number of the n'th previous ancestor call.
+ * this works in chrome, and should work in nodejs as well.
+ *
+ * @param n : int (default: n=1) - the number of calls to trace up the
+ *   stack from the current call.  `n=0` gives you your current file/line.
+ *  `n=1` gives the file/line that called you.
+ */
+const inspectCallStack = (n, maxPathLength) =>{
+  maxPathLength = existy(maxPathLength) ? maxPathLength : 24;
+  maxPathLength = maxPathLength === 0 ? Infinity : maxPathLength;
+  if (isNaN(n) || n < 0) n = 1;
+  n += 1;
+  var s = (new Error()).stack;
+  var a = s.indexOf('\n', 5);
+  while (n--) {
+    a = s.indexOf('\n', a + 1);
+    if (a < 0) {
+      a = s.lastIndexOf('\n', s.length);
+      break;
+    }
+  }
+  var b = s.indexOf('\n', a + 1);
+  if (b < 0) b = s.length;
+  a = s.lastIndexOf(' ', b);
+  b = s.lastIndexOf(':', b);
+  s = s.substring(a + 1, b);
+  if (s.length > maxPathLength) s = '...' + s.slice(maxPathLength);
+  return s.split(':');
+}
+
+module.exports = { AssertionError, assert, inspectCallStack };
