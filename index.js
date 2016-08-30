@@ -1,3 +1,5 @@
+const _ = require('lodash');
+
 class AssertionError extends Error {
   constructor(message) {
     super(message);
@@ -17,13 +19,9 @@ function assert(condition, message) {
   }
 }
 
-const existy = (val) => {
-  return (val !== null && val !== undefined);
-}
+const existy = (val) => val !== null && val !== undefined;
 
-const truthy = (val) => {
-  return !!val;
-}
+const truthy = (val) => !!val;
 
 /**
  *
@@ -42,8 +40,8 @@ const inspectCallStack = (n, maxPathLength) =>{
   maxPathLength = maxPathLength === 0 ? Infinity : maxPathLength;
   if (isNaN(n) || n < 0) n = 1;
   n += 1;
-  var s = (new Error()).stack;
-  var a = s.indexOf('\n', 5);
+  let s = (new Error()).stack;
+  let a = s.indexOf('\n', 5);
   while (n--) {
     a = s.indexOf('\n', a + 1);
     if (a < 0) {
@@ -51,13 +49,46 @@ const inspectCallStack = (n, maxPathLength) =>{
       break;
     }
   }
-  var b = s.indexOf('\n', a + 1);
+  let b = s.indexOf('\n', a + 1);
   if (b < 0) b = s.length;
   a = s.lastIndexOf(' ', b);
   b = s.lastIndexOf(':', b);
   s = s.substring(a + 1, b);
   if (s.length > maxPathLength) s = '...' + s.slice(maxPathLength);
   return s.split(':');
-}
+};
 
-module.exports = { AssertionError, assert, inspectCallStack };
+const _printable = (ancestors, val) => {
+  if (_.isFunction(val)) return val.name || '[anonymous function]';
+
+  if (_.isPlainObject(val) || _.isArray(val)) {
+    if (_.includes(ancestors, val)) return '[circular]';
+    const printableObj = {};
+    ancestors.push(val);
+    if (_.keys(val).length > 1000) return ('too long');
+    _.each(val, (next, key) => {
+      printableObj[key] = _printable(ancestors, next);
+    });
+    ancestors.pop();
+    return printableObj;
+  }
+
+  if (_.isObject(val)) return val.toString();
+
+  return val;
+};
+
+// Recursively copy an object into a printable representation.
+// * Replace circular references with a token
+// * Replace functions with their name
+// * Call toString() on objects that are not 'plainObjects'
+const printable = (val) => _printable([], val);
+
+module.exports = {
+  AssertionError,
+  assert,
+  inspectCallStack,
+  existy,
+  truthy,
+  printable,
+};
