@@ -58,6 +58,13 @@ const inspectCallStack = (n, maxPathLength) =>{
   return s.split(':');
 };
 
+const interleave = (array, item) => {
+  return _.flatten(_.map(array, function(elem, idx) {
+    if (idx === (array.length - 1)) return [elem];
+    else return [elem, item];
+  }));
+}
+
 const _printable = (ancestors, val) => {
   if (_.isFunction(val)) return val.name || '[anonymous function]';
 
@@ -91,4 +98,5 @@ module.exports = {
   existy,
   truthy,
   printable,
+  interleave
 };
