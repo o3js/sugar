@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const fp = require('lodash/fp');
 
 class AssertionError extends Error {
   constructor(message) {
@@ -85,11 +86,44 @@ const _printable = (ancestors, val) => {
   return val;
 };
 
+function parseParams(fn) {
+  if (!fn) {
+    return [];
+  }
+
+  var functionExp = /^function\s*[^\(]*\(\s*([^\)]*)\)/m;
+  var commentsExp = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg;
+  var argExp = /^\s*(\S+?)\s*$/;
+
+  var fnString = fn.toString().replace(commentsExp, '');
+  var match = fnString.match(functionExp);
+  var params = match && match[1];
+
+  if (!match || !params) {
+    return [];
+  }
+
+  return _.map(params.split(','), function (param) {
+    return param.match(argExp)[1];
+  });
+}
+
 // Recursively copy an object into a printable representation.
 // * Replace circular references with a token
 // * Replace functions with their name
 // * Call toString() on objects that are not 'plainObjects'
 const printable = (val) => _printable([], val);
+
+function partials(...specs) {
+  specs = fp.chunk(2, specs);
+  return fp.transform(
+    (result, [fn, deps]) => {
+      result[fn.name] = fp.partial(fn, deps);
+      return result;
+    },
+    {},
+    specs);
+}
 
 module.exports = {
   AssertionError,
@@ -98,5 +132,7 @@ module.exports = {
   existy,
   truthy,
   printable,
-  interleave
+  interleave,
+  parseParams,
+  partials
 };
