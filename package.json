@@ -1,11 +1,10 @@
 {
   "name": "o3-sugar",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "./runtests.sh",
-    "postinstall": "npm link mocha-brackets"
+    "test": "./runtests.sh"
   },
   "repository": {
     "type": "git",
