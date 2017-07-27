@@ -125,6 +125,10 @@ function partials(...specs) {
     specs);
 }
 
+function partialAll(object, args) {
+  return fp.mapValues((fn) => fp.partial(fn, args), object);
+}
+
 module.exports = {
   AssertionError,
   assert,
