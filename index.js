@@ -138,5 +138,6 @@ module.exports = {
   printable,
   interleave,
   parseParams,
-  partials
+  partials,
+  partialAll,
 };
