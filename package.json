@@ -1,11 +1,10 @@
 {
   "name": "sugar",
-  "version": "0.0.2",
+  "version": "0.0.4",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "./runtests.sh",
-    "postinstall": "npm link mocha-brackets"
+    "test": "./runtests.sh"
   },
   "repository": {
     "type": "git",
@@ -25,7 +24,7 @@
     "eslint-plugin-jsx-a11y": "^2.2.0",
     "eslint-plugin-react": "^6.2.0",
     "mocha": "^2.5.3",
-    "mocha-brackets": "file:../mocha-brackets"
+    "mocha-brackets": "0.0.2"
   },
   "dependencies": {
     "lodash": "^4.15.0"
