@@ -129,6 +129,10 @@ function partialAll(object, args) {
   return fp.mapValues((fn) => fp.partial(fn, args), object);
 }
 
+function mapIndexed(fn, obj) {
+  return _.map(_.values(obj), (item, idx) => fn(item, idx));
+}
+
 module.exports = {
   AssertionError,
   assert,
@@ -140,4 +144,5 @@ module.exports = {
   parseParams,
   partials,
   partialAll,
+  mapIndexed,
 };
